@@ -1,0 +1,25 @@
+---
+- name: Configure Kubernetes
+  hosts: cluster
+  become: true
+
+  vars:
+    rke2_disable_firewalld: true
+
+  roles:
+    - role: christian_deleon.kubernetes.rke2
+      tags: rke2
+
+- name: Configure kubeconfig
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    kubeconfig_env_file: ~/.exports
+    kubeconfig_dir: ~/.kube
+    kubeconfig_name: "{{ context_name }}"
+
+  roles:
+    - role: christian_deleon.kubernetes.kubeconfig
+      tags: kubeconfig
