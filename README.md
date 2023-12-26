@@ -224,13 +224,12 @@ flux create helmrelease sealed-secrets \
     --export > helmrelease.yaml
 ```
 
-4. Export the Public Key
+4. Create `namespace.yaml`
 
 ```bash
-kubeseal --fetch-cert \
-    --controller-name=sealed-secrets-controller \
-    --controller-namespace=sealed-secrets \
-    > pub-sealed-secrets.pem
+kubectl create namespace sealed-secrets \
+  --dry-run=client \
+  --output=yaml > namespace.yaml
 ```
 
 5. Create `kustomization.yaml`
@@ -239,13 +238,29 @@ kubeseal --fetch-cert \
 kustomize create --autodetect
 ```
 
-6. Update `infrastructure/dev/kustomization.yaml` to include the `sealed-secrets` kustomization. It should look like this:
+6. Update `infrastructure/development/kustomization.yaml` to include the `sealed-secrets` kustomization. It should look like this:
 
 ```bash
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base/sealed-secrets
+```
+
+7. Commit your changes to Git
+
+8. If not using `kind`, port forward the sealed-secrets controller
+
+```bash
+kubectl port-forward -n sealed-secrets svc/sealed-secrets-controller 8080:8080
+```
+
+9. Fetch the public key
+
+```bash
+kubeseal --fetch-cert \
+    --controller-name=sealed-secrets-controller \
+    --controller-namespace=sealed-secrets
 ```
 
 ### Creating a Sealed Secret
