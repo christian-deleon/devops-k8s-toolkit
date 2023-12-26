@@ -25,6 +25,7 @@ This repository contains a demo of a DevOps workflow using Kubernetes and GitOps
       - [Configuring Flux CD](#configuring-flux-cd)
   - ["Sealed Secrets" for Kubernetes](#sealed-secrets-for-kubernetes)
     - [Creating a Sealed Secret](#creating-a-sealed-secret)
+  - [Backup and Restore with Velero](#backup-and-restore-with-velero)
 
 ## Project Structure
 
@@ -84,13 +85,14 @@ You can choose to build a local Kubernetes cluster using `kind` or building a pr
 ### Common Prerequisites
 
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/)
-- [flux](https://fluxcd.io/flux/installation/)
+- [Kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/)
+- [Flux](https://fluxcd.io/flux/installation/)
+- [Velero](https://velero.io/docs/v1.3.0/basic-install/#install-the-cli)
 
 ### Local Kubernetes Cluster
 
 - [Docker](https://docs.docker.com/engine/install/)
-- [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
+- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
 
 ### Production Kubernetes Cluster
 
@@ -276,3 +278,82 @@ echo -n mypassword | kubectl create secret generic postgres-password -n postgres
 ```
 
 5. Commit the sealed secret to Git
+
+## Backup and Restore with Velero
+
+Velero gives you tools to back up and restore your Kubernetes cluster resources and persistent volumes. You can run Velero with a public cloud platform or on-premises.
+
+1. Change directory to `infrastructure/base/velero`
+
+2. Create `helmrepository.yaml`
+
+```bash
+flux create source helm vmware-tanzu --url=https://vmware-tanzu.github.io/helm-charts --interval=1h --export > helmrepository.yaml
+```
+
+3. Create `helmrelease.yaml`
+
+```bash
+flux create helmrelease velero --interval=1h --release-name=velero --target-namespace=velero --source=HelmRepository/vmware-tanzu --chart=velero --chart-version=">=5.2.0-0" --export > helmrelease.yaml
+```
+
+4. Create `velero-values-secret.yaml` using the following template:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: velero-values
+  namespace: velero
+stringData:
+  values.yaml: |
+    credentials:
+      secretContents:
+        cloud: |
+          [default]
+          aws_access_key_id=<YOUR_AWS_ACCESS_KEY_ID>
+          aws_secret_access_key=<YOUR_AWS_SECRET_ACCESS_KEY>
+    configuration:
+      backupStorageLocation:
+        - name: default
+          provider: aws
+          bucket: <YOUR_BUCKET_NAME>
+          config:
+            region: <YOUR_BUCKET_REGION>
+      volumeSnapshotLocation:
+        - name: default
+          provider: aws
+          config:
+            region: <YOUR_BUCKET_REGION>
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: "velero/velero-plugin-for-aws:v1.8.0"
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+    schedules:
+      daily:
+        schedule: "@every 1h"
+        template:
+          includedNamespaces:
+            - "*"
+          snapshotVolumes: false
+          ttl: "168h"
+```
+
+5. Seal the secret
+
+```bash
+kubeseal --format=yaml \
+  --controller-name=sealed-secrets-controller \
+  --controller-namespace=sealed-secrets \
+  < velero-values-secret.yaml > velero-values-sealed.yaml
+```
+
+6. Create `kustomization.yaml`
+
+```bash
+kustomize create --autodetect
+```
+
+7. Commit your changes to Git
