@@ -8,7 +8,7 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: main
+    branch: velero
   secretRef:
     name: flux-system
   url: https://gitlab.robochris.net/devops/devops-k8s-demo.git
