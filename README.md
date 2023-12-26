@@ -303,7 +303,17 @@ echo -n mypassword | kubectl create secret generic postgres-password -n postgres
 
 ### Creating a Sealed SSH Key
 
-1. Obtain the SSH Fingerprint of Your Git Server
+1. Create an SSH key
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "flux-service-account"
+```
+
+When prompted for a file in which to save the key, name it something like `flux-service-account`.
+
+2. Add the public key to your Git server
+
+3. Obtain the SSH Fingerprint of Your Git Server
 
 ```bash
 ssh-keyscan gitlab.robochris.net
@@ -311,23 +321,23 @@ ssh-keyscan gitlab.robochris.net
 
 This command will output several lines. You'll typically use the one starting with gitlab.robochris.net ssh-rsa.
 
-2. Create a Known Hosts File
+4. Create a Known Hosts File
 
 ```bash
 vim known_hosts
 ```
 
-3. Create a k8s secret called `flux-git-auth` and reference your known_hosts file
+5. Create a k8s secret called `flux-git-auth` and reference your known_hosts file
 
 ```bash
 kubectl create secret generic flux-git-auth \
-    --from-file=identity=/home/$USER/.ssh/id_rsa \
+    --from-file=identity=/path/to/flux-service-account \
     --from-file=known_hosts=./known_hosts \
     --dry-run=client \
     -o yaml > flux-git-auth-secret.yaml
 ```
 
-4. Seal the k8s secret with kubeseal
+6. Seal the k8s secret with kubeseal
 
 ```bash
 kubeseal --controller-name=sealed-secrets-controller \
@@ -335,7 +345,7 @@ kubeseal --controller-name=sealed-secrets-controller \
   --format=yaml < flux-git-auth-secret.yaml > flux-git-auth-sealed.yaml
 ```
 
-5. Modify the sealed secret to add the `namespace-wide` annotation. It should look like this:
+7. Modify the sealed secret to add the `namespace-wide` annotation. It should look like this:
 
 ```yaml
 apiVersion: bitnami.com/v1alpha1
@@ -356,7 +366,7 @@ spec:
       # Do not specify namespace here
 ```
 
-6. Create a Flux GitRepository and reference the secret `flux-git-auth`
+8. Create a Flux GitRepository and reference the secret `flux-git-auth`
 
 ```bash
 flux create source git postgres \
