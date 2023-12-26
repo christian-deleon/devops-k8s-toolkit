@@ -353,7 +353,7 @@ stringData:
           - mountPath: /target
             name: plugins
     schedules:
-      daily:
+      hourly:
         schedule: "@every 1h"
         template:
           includedNamespaces:
