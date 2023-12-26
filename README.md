@@ -271,7 +271,13 @@ kubeseal --fetch-cert \
 echo -n mypassword | kubectl create secret generic postgres-password -n postgres --dry-run=client --from-file=password=/dev/stdin -o yaml > postgres-password-secret.yaml
 ```
 
-2. Seal the secret
+3. If not using `kind`, port forward the sealed-secrets controller
+
+```bash
+kubectl port-forward -n sealed-secrets svc/sealed-secrets-controller 8080:8080
+```
+
+4. Seal the secret
 
 ```bash
 kubeseal --format=yaml \
@@ -280,9 +286,9 @@ kubeseal --format=yaml \
   < postgres-password-secret.yaml > postgres-password-sealed.yaml
 ```
 
-3. Delete the unsealed secret
+5. Delete the unsealed secret
 
-4. Or instead of steps 1-3, you can do this:
+6. Or instead of steps 1-3, you can do this:
 
 ```bash
 echo -n mypassword | kubectl create secret generic postgres-password -n postgres --dry-run=client --from-file=password=/dev/stdin -o yaml | \
@@ -292,7 +298,7 @@ echo -n mypassword | kubectl create secret generic postgres-password -n postgres
     > postgres-password-sealed.yaml
 ```
 
-5. Commit the sealed secret to Git
+7. Commit the sealed secret to Git
 
 ## Backup and Restore with Velero
 
