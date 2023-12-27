@@ -4,6 +4,32 @@
 
 This project demonstrates a comprehensive DevOps workflow, showcasing provisioning, configuring, and deploying a fully-featured Kubernetes cluster both on-premise and in the cloud. Utilizing Infrastructure as Code (IaC), popular DevOps tools, GitOps principles, and industry best practices, this project serves as a robust reference implementation for building a production-ready Kubernetes environment.
 
+## Tools and Technologies
+
+- Infrastructure as Code (IaC)
+  - On-premise
+    - vSphere
+    - Kind for development and testing
+  - Cloud (Coming Soon)
+    - AWS
+    - Azure
+    - GCP
+- Configuration Management with Ansible
+- GitOps with Flux CD
+- Backup and Disaster-Recovery with Velero
+- Security
+  - RBAC (Coming Soon)
+  - Network policies (Coming Soon)
+  - mTLS - Encryption in transit (Coming Soon)
+  - Secrets management with HashiCorp Vault
+  - Third-party KMS integration with AWS KMS (Coming Soon)
+  - Securing etcd (Coming Soon)
+  - Security Policies with Kyverno (Coming Soon)
+- Monitoring (Coming Soon)
+  - Prometheus
+  - Grafana
+  - Loki
+
 ### Objectives
 
 - Provide a hands-on, practical guide to setting up Kubernetes clusters.
@@ -55,22 +81,3 @@ In the [flux.md](docs/flux.md) guide, you will learn how to deploy Flux CD to yo
 In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications.
 
 In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications.
-
-## Coming Soon
-
-- Cloud deployment guides
-  - AWS
-  - Azure
-  - GCP
-- Backup and disaster recovery with Velero
-- Security best practices
-  - RBAC
-  - Network policies
-  - mTLS - Encryption in transit
-  - Third-party KMS integration with Vault
-  - Securing etcd
-  - Security Policies with Kyverno
-- Monitoring and observability
-  - Prometheus
-  - Grafana
-  - Loki
