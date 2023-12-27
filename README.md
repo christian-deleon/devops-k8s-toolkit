@@ -25,7 +25,6 @@ This repository contains a demo of a DevOps workflow using Kubernetes and GitOps
       - [Configuring Flux CD](#configuring-flux-cd)
   - ["Sealed Secrets" for Kubernetes](#sealed-secrets-for-kubernetes)
     - [Creating a Sealed Secret](#creating-a-sealed-secret)
-    - [Creating a Sealed SSH Key](#creating-a-sealed-ssh-key)
   - [Backup and Restore with Velero](#backup-and-restore-with-velero)
 
 ## Project Structure
@@ -300,81 +299,6 @@ echo -n mypassword | kubectl create secret generic postgres-password -n postgres
 ```
 
 7. Commit the sealed secret to Git
-
-### Creating a Sealed SSH Key
-
-1. Create an SSH key
-
-```bash
-ssh-keygen -t rsa -b 4096 -C "flux-service-account"
-```
-
-When prompted for a file in which to save the key, name it something like `flux-service-account`.
-
-2. Add the public key to your Git server
-
-3. Obtain the SSH Fingerprint of Your Git Server
-
-```bash
-ssh-keyscan gitlab.robochris.net
-```
-
-This command will output several lines. You'll typically use the one starting with gitlab.robochris.net ssh-rsa.
-
-4. Create a Known Hosts File
-
-```bash
-vim known_hosts
-```
-
-5. Create a k8s secret called `flux-git-auth` and reference your known_hosts file
-
-```bash
-kubectl create secret generic flux-git-auth \
-    --from-file=identity=/path/to/flux-service-account \
-    --from-file=known_hosts=./known_hosts \
-    --dry-run=client \
-    -o yaml > flux-git-auth-secret.yaml
-```
-
-6. Seal the k8s secret with kubeseal
-
-```bash
-kubeseal --controller-name=sealed-secrets-controller \
-  --controller-namespace=sealed-secrets \
-  --format=yaml < flux-git-auth-secret.yaml > flux-git-auth-sealed.yaml
-```
-
-7. Modify the sealed secret to add the `namespace-wide` annotation. It should look like this:
-
-```yaml
-apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
-metadata:
-  creationTimestamp: null
-  name: flux-git-auth
-  # Do not specify namespace here
-  annotations:
-    sealedsecrets.bitnami.com/namespace-wide: "true"
-spec:
-  encryptedData:
-    identity: ...
-    known_hosts: ...
-  template:
-    metadata:
-      name: flux-git-auth
-      # Do not specify namespace here
-```
-
-8. Create a Flux GitRepository and reference the secret `flux-git-auth`
-
-```bash
-flux create source git postgres \
-    --url=ssh://git@gitlab.robochris.net/my-group/my-project.git \
-    --branch=main \
-    --secret-ref=flux-git-auth \
-    --export > gitrepository.yaml
-```
 
 ## Backup and Restore with Velero
 
