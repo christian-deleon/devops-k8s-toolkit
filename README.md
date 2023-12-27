@@ -1,380 +1,57 @@
 # DevOps Kubernetes Demo
 
-## Description
-
-This repository contains a demo of a DevOps workflow using Kubernetes and GitOps.
-
-## Table of Contents
-
-- [DevOps Kubernetes Demo](#devops-kubernetes-demo)
-  - [Description](#description)
-  - [Table of Contents](#table-of-contents)
-  - [Project Structure](#project-structure)
-  - [Prerequisites](#prerequisites)
-    - [Common Prerequisites](#common-prerequisites)
-    - [Local Kubernetes Cluster](#local-kubernetes-cluster)
-    - [Production Kubernetes Cluster](#production-kubernetes-cluster)
-  - [HashiCorp Packer](#hashicorp-packer)
-  - [HashiCorp Terraform](#hashicorp-terraform)
-  - [Ansible](#ansible)
-  - [Kind (Kubernetes in Docker)](#kind-kubernetes-in-docker)
-    - [Building a local Kubernetes cluster](#building-a-local-kubernetes-cluster)
-  - [Flux CD](#flux-cd)
-    - [Using Flux CD](#using-flux-cd)
-      - [Example of an `monorepo` directory structure:](#example-of-an-monorepo-directory-structure)
-      - [Configuring Flux CD](#configuring-flux-cd)
-  - ["Sealed Secrets" for Kubernetes](#sealed-secrets-for-kubernetes)
-    - [Creating a Sealed Secret](#creating-a-sealed-secret)
-  - [Backup and Restore with Velero](#backup-and-restore-with-velero)
-
-## Project Structure
-
-```bash
-├── apps
-│   ├── base
-│   │   └── nginx
-│   │       ├── deployment.yaml
-│   │       ├── kustomization.yaml
-│   │       └── namespace.yaml
-│   └── development
-│       └── kustomization.yaml
-├── clusters
-│   └── development
-│       ├── apps.yaml
-│       ├── flux-system
-│       │   ├── gotk-components.yaml
-│       │   ├── gotk-sync.yaml
-│       │   └── kustomization.yaml
-│       └── infrastructure.yaml
-├── iac
-│   └── vsphere-dev
-│       ├── ansible
-│       │   ├── ansible.cfg
-│       │   ├── collections
-│       │   │   └── christian_deleon
-│       │   │       └── kubernetes
-│       │   ├── deploy-rke2.yml
-│       │   ├── hosts
-│       │   │   ├── group_vars
-│       │   │   │   └── all.yml
-│       │   │   └── vmware.yml
-│       │   └── requirements.yml
-│       ├── packer
-│       │   ├── alma-linux-8
-│       │   └── variables.pkrvars.hcl
-│       └── terraform
-│           ├── main.tf
-│           └── variables.tf
-├── infrastructure
-│   ├── base
-│   │   └── sealed-secrets
-│   │       ├── helmrelease.yaml
-│   │       ├── helmrepository.yaml
-│   │       └── kustomization.yaml
-│   └── development
-│       └── kustomization.yaml
-├── README.md
-└── scripts
-    └── flux-development-bootstrap.sh
-```
-
-## Prerequisites
-
-You can choose to build a local Kubernetes cluster using `kind` or building a production ready cluster using `Packer`, `Terraform`, and `Ansible`.
-
-### Common Prerequisites
-
-- [kubectl](https://kubernetes.io/docs/tasks/tools/)
-- [Kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/)
-- [Flux](https://fluxcd.io/flux/installation/)
-- [Velero](https://velero.io/docs/v1.3.0/basic-install/#install-the-cli)
-
-### Local Kubernetes Cluster
-
-- [Docker](https://docs.docker.com/engine/install/)
-- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-with-a-package-manager)
-
-### Production Kubernetes Cluster
-
-- [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
-- [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip)
-
-## HashiCorp Packer
+## Project Overview
 
-HashiCorp Packer is an open-source tool for creating identical machine images for multiple platforms from a single source configuration. Packer is lightweight, runs on every major operating system, and is highly performant, creating machine images for multiple platforms in parallel.
+This project demonstrates a comprehensive DevOps workflow, showcasing provisioning, configuring, and deploying a fully-featured Kubernetes cluster both on-premise and in the cloud. Utilizing Infrastructure as Code (IaC), popular DevOps tools, GitOps principles, and industry best practices, this project serves as a robust reference implementation for building a production-ready Kubernetes environment.
 
-TODO: Add Packer instructions
+### Objectives
 
-## HashiCorp Terraform
+- Provide a hands-on, practical guide to setting up Kubernetes clusters.
+- Demonstrate the use of IaC for efficient and reproducible infrastructure setup.
+- Highlight best practices in DevOps, GitOps, and Kubernetes management.
 
-HashiCorp Terraform is an open-source infrastructure as code (IaC) software tool that enables you to safely and predictably create, change, and improve infrastructure. It's part of a broader suite of tools from HashiCorp designed for DevOps and cloud infrastructure management.
+## Getting Started
 
-TODO: Add Terraform instructions
+Embark on building your Kubernetes cluster using the tools and methodologies illustrated in this project. Follow the step-by-step guides to create an environment where you can deploy applications via GitOps, managing both infrastructure and applications seamlessly.
 
-## Ansible
+### Prerequisites
 
-Ansible is an open-source software provisioning, configuration management, and application-deployment tool enabling infrastructure as code. It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows.
+- Familiarity with Kubernetes concepts.
+- Basic understanding of Docker, Terraform, Ansible, and GitOps.
+- Access to on-premise hardware or cloud infrastructure as required.
 
-TODO: Add Ansible instructions
+### Quickstart with Kind
 
-## Kind (Kubernetes in Docker)
+For development and testing, leverage Kind for a quick and efficient setup.
 
-Kind is a tool for running local Kubernetes clusters using Docker container “nodes”. kind was primarily designed for testing Kubernetes itself, but may be used for local development or CI.
+**Kind**: A tool for running local Kubernetes clusters using Docker containers. Ideal for development, testing, and CI workflows.
 
-### Building a local Kubernetes cluster
+- **Advantages**: Quick setup, designed for Kubernetes testing.
+- **Guide**: [kind.md](docs/kind.md)
 
-1. Create a Kubernetes cluster using `kind`
+### Building on vSphere (On-premise)
 
-```bash
-kind create cluster --name devops-demo
-```
+For a more robust and production-like environment, consider building your cluster on-premise using vSphere.
 
-2. Test the cluster
+**Steps**:
 
-```bash
-kubectl cluster-info --context kind-devops-demo
-```
+1. **Packer**: Customize Alma Linux 8 with RKE2 pre-installed.
+    - **Guide**: [packer.md](docs/packer.md)
+2. **Terraform**: Provision and manage the infrastructure.
+    - **Guide**: [terraform.md](docs/terraform.md)
+3. **Ansible**: Configure the provisioned infrastructure and deploy Kubernetes.
+    - **Guide**: [ansible.md](docs/ansible.md)
 
-## Flux CD
+### Cloud Deployment (Coming Soon)
 
-Flux is a tool that automatically ensures that the state of a cluster matches the config in git. It uses an operator in the cluster to trigger deployments inside Kubernetes, which means you don't need a separate CD tool. It monitors all relevant image repositories, detects new images, triggers deployments and updates the desired running configuration based on that (and a configurable policy).
+Documentation and guides for deploying to popular cloud providers will be available in future updates.
 
-### Using Flux CD
+### Deploying your Infrastructure and Applications using GitOps
 
-#### Example of an `monorepo` directory structure:
+Once your cluster is up and running, you can deploy applications using GitOps principles. Flux CD is a popular GitOps tool that allows you to manage your Kubernetes cluster and applications using Git repositories.
 
-```bash
-├── apps
-│   ├── base
-│   ├── production
-│   └── development
-├── infrastructure
-│   ├── base
-│   ├── production
-│   └── development
-└── clusters
-    ├── production
-    └── development
-```
+In the [flux.md](docs/flux.md) guide, you will learn how to deploy Flux CD to your cluster and configure it to deploy applications from a Git repository.
 
-#### Configuring Flux CD
+In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications.
 
-1. Change directory to `clusters/development`
-
-2. Create `infrastructure.yaml`
-
-```bash
-flux create kustomization infrastructure \
-    --source=GitRepository/flux-system \
-    --path="./infrastructure/development" \
-    --prune=true \
-    --interval=1m \
-    --export > infrastructure.yaml
-```
-
-3. Create `apps.yaml` which depends on infrastructure
-
-```bash
-flux create kustomization apps \
-    --source=GitRepository/flux-system \
-    --path="./apps/development" \
-    --prune=true \
-    --interval=1m \
-    --depends-on=infrastructure \
-    --export > apps.yaml
-```
-
-4. Change directory to `apps/development`
-
-5. Create `kustomization.yaml`
-
-```bash
-kustomize create
-```
-
-6. Repeat step 5 in `infrastructure/development`
-
-## "Sealed Secrets" for Kubernetes
-
-Sealed Secrets is a Kubernetes Custom Resource Definition Controller which allows you to store and manage Kubernetes secrets in Git repositories in an encrypted format.
-
-1. Change directory to `infrastructure/base/sealed-secrets`
-
-2. Create `helmrepository.yaml`
-
-```bash
-flux create source helm sealed-secrets \
-    --interval=1h \
-    --url=https://bitnami-labs.github.io/sealed-secrets \
-    --export > helmrepository.yaml
-```
-
-3. Create `helmrelease.yaml`
-
-```bash
-flux create helmrelease sealed-secrets \
-    --interval=1h \
-    --release-name=sealed-secrets-controller \
-    --target-namespace=sealed-secrets \
-    --source=HelmRepository/sealed-secrets \
-    --chart=sealed-secrets \
-    --chart-version=">=1.15.0-0" \
-    --crds=CreateReplace \
-    --export > helmrelease.yaml
-```
-
-4. Create `namespace.yaml`
-
-```bash
-kubectl create namespace sealed-secrets \
-  --dry-run=client \
-  --output=yaml > namespace.yaml
-```
-
-5. Create `kustomization.yaml`
-
-```bash
-kustomize create --autodetect
-```
-
-6. Update `infrastructure/development/kustomization.yaml` to include the `sealed-secrets` kustomization. It should look like this:
-
-```bash
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - ../base/sealed-secrets
-```
-
-7. Commit your changes to Git
-
-8. If not using `kind`, port forward the sealed-secrets controller
-
-```bash
-kubectl port-forward -n sealed-secrets svc/sealed-secrets-controller 8080:8080
-```
-
-9. Fetch the public key
-
-```bash
-kubeseal --fetch-cert \
-    --controller-name=sealed-secrets-controller \
-    --controller-namespace=sealed-secrets
-```
-
-### Creating a Sealed Secret
-
-1. Create a secret
-
-```bash
-echo -n mypassword | kubectl create secret generic postgres-password -n postgres --dry-run=client --from-file=password=/dev/stdin -o yaml > postgres-password-secret.yaml
-```
-
-3. If not using `kind`, port forward the sealed-secrets controller
-
-```bash
-kubectl port-forward -n sealed-secrets svc/sealed-secrets-controller 8080:8080
-```
-
-4. Seal the secret
-
-```bash
-kubeseal --format=yaml \
-  --controller-name=sealed-secrets-controller \
-  --controller-namespace=sealed-secrets \
-  < postgres-password-secret.yaml > postgres-password-sealed.yaml
-```
-
-5. Delete the unsealed secret
-
-6. Or instead of steps 1-3, you can do this:
-
-```bash
-echo -n mypassword | kubectl create secret generic postgres-password -n postgres --dry-run=client --from-file=password=/dev/stdin -o yaml | \
-  kubeseal --format=yaml \
-    --controller-name=sealed-secrets-controller \
-    --controller-namespace=sealed-secrets \
-    > postgres-password-sealed.yaml
-```
-
-7. Commit the sealed secret to Git
-
-## Backup and Restore with Velero
-
-Velero gives you tools to back up and restore your Kubernetes cluster resources and persistent volumes. You can run Velero with a public cloud platform or on-premises.
-
-1. Change directory to `infrastructure/base/velero`
-
-2. Create `helmrepository.yaml`
-
-```bash
-flux create source helm vmware-tanzu --url=https://vmware-tanzu.github.io/helm-charts --interval=1h --export > helmrepository.yaml
-```
-
-3. Create `helmrelease.yaml`
-
-```bash
-flux create helmrelease velero --interval=1h --release-name=velero --target-namespace=velero --source=HelmRepository/vmware-tanzu --chart=velero --chart-version=">=5.2.0-0" --export > helmrelease.yaml
-```
-
-4. Create `velero-values-secret.yaml` using the following template:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: velero-values
-  namespace: velero
-stringData:
-  values.yaml: |
-    credentials:
-      secretContents:
-        cloud: |
-          [default]
-          aws_access_key_id=<YOUR_AWS_ACCESS_KEY_ID>
-          aws_secret_access_key=<YOUR_AWS_SECRET_ACCESS_KEY>
-    configuration:
-      backupStorageLocation:
-        - name: default
-          provider: aws
-          bucket: <YOUR_BUCKET_NAME>
-          config:
-            region: <YOUR_BUCKET_REGION>
-      volumeSnapshotLocation:
-        - name: default
-          provider: aws
-          config:
-            region: <YOUR_BUCKET_REGION>
-    initContainers:
-      - name: velero-plugin-for-aws
-        image: "velero/velero-plugin-for-aws:v1.8.0"
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
-    schedules:
-      hourly:
-        schedule: "@every 1h"
-        template:
-          includedNamespaces:
-            - "*"
-          snapshotVolumes: false
-          ttl: "168h"
-```
-
-5. Seal the secret
-
-```bash
-kubeseal --format=yaml \
-  --controller-name=sealed-secrets-controller \
-  --controller-namespace=sealed-secrets \
-  < velero-values-secret.yaml > velero-values-sealed.yaml
-```
-
-6. Create `kustomization.yaml`
-
-```bash
-kustomize create --autodetect
-```
-
-7. Commit your changes to Git
+In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications.

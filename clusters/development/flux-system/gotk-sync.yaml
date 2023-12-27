@@ -8,10 +8,10 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: main
+    branch: develop
   secretRef:
     name: flux-system
-  url: https://gitlab.robochris.net/devops/devops-k8s-demo.git
+  url: ssh://git@gitlab.robochris.net/devops/devops-k8s-demo.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
