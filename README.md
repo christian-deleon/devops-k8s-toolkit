@@ -55,3 +55,22 @@ In the [flux.md](docs/flux.md) guide, you will learn how to deploy Flux CD to yo
 In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications.
 
 In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications.
+
+## Coming Soon
+
+- Cloud deployment guides
+  - AWS
+  - Azure
+  - GCP
+- Backup and disaster recovery with Velero
+- Security best practices
+  - RBAC
+  - Network policies
+  - mTLS - Encryption in transit
+  - Third-party KMS integration with Vault
+  - Securing etcd
+  - Security Policies with Kyverno
+- Monitoring and observability
+  - Prometheus
+  - Grafana
+  - Loki
