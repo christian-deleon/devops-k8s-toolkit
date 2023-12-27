@@ -1,4 +1,4 @@
-# DevOps Kubernetes Demo
+# DevOps Kubernetes Toolkit
 
 ## Project Overview
 
