@@ -260,3 +260,31 @@ vault write database/roles/my-postgres-role \
   default_ttl="1h" \
   max_ttl="24h"
 ```
+
+### Retrieving a Database Credential
+
+1. Create a Kubernetes service account
+
+```bash
+kubectl create serviceaccount my-app -n my-app-namespace
+```
+
+2. Create a Vault Role for your namespace
+
+```bash
+vault write auth/kubernetes/role/my-app \
+  bound_service_account_names=my-app \
+  bound_service_account_namespaces=my-app-namespace \
+  policies=my-app \
+  ttl=1h
+```
+
+3. Create a policy
+
+```bash
+vault policy write my-app - <<EOF
+path "database/creds/my-postgres-role" {
+  capabilities = ["read"]
+}
+EOF
+```
