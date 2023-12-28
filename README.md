@@ -17,6 +17,7 @@ This project demonstrates a comprehensive DevOps workflow, showcasing provisioni
 - Configuration Management with Ansible
 - GitOps with Flux CD
 - Backup and Disaster-Recovery with Velero
+- Persistent Storage with a NFS Provisioner (Coming Soon)
 - Security
   - RBAC (Coming Soon)
   - Network policies (Coming Soon)
