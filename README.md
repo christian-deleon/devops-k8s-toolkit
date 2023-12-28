@@ -78,6 +78,6 @@ Once your cluster is up and running, you can deploy applications using GitOps pr
 
 In the [flux.md](docs/flux.md) guide, you will learn how to deploy Flux CD to your cluster and configure it to deploy applications from a Git repository.
 
-In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications.
+In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications. This is the recommended approach for storing secrets in your cluster.
 
-In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications.
+In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications. If you do not wish to deploy HashiCorp Vault, this is an alternative approach for storing secrets in your cluster. However, this approach is not recommended for production environments.
