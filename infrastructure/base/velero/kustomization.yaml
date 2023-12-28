@@ -4,4 +4,3 @@ resources:
 - helmrelease.yaml
 - helmrepository.yaml
 - namespace.yaml
-- velero-values-sealed.yaml

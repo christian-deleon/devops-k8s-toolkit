@@ -8,8 +8,6 @@ spec:
   interval: 1m0s
   path: ./infrastructure/development
   prune: true
-  dependsOn:
-    - name: sealed-secrets
   sourceRef:
     kind: GitRepository
     name: flux-system

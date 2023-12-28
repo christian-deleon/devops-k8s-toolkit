@@ -16,7 +16,3 @@ spec:
         name: vmware-tanzu
         namespace: flux-system
       version: '>=5.2.0-0'
-  valuesFrom:
-    - kind: Secret
-      name: velero-values
-      valuesKey: values.yaml
