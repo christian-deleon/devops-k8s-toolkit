@@ -130,12 +130,6 @@ vault write auth/kubernetes/config \
 exit
 ```
 
-7. Create a Kubernetes service account
-
-```bash
-kubectl create serviceaccount vault-auth -n vault
-```
-
 ## Enabling Secrets Engine
 
 1. Follow the steps in [Enabling the Kubernetes Authentication Method](#enabling-the-kubernetes-authentication-method) section
@@ -180,6 +174,12 @@ EOF
 
 ```bash
 vault kv put secret/postgres/cred username="postgres" password="postgres"
+```
+
+4. Create a Kubernetes service account
+
+```bash
+kubectl create serviceaccount vault-auth -n postgres
 ```
 
 ## Retrieving Secrets
