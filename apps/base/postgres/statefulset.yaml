@@ -28,5 +28,13 @@ spec:
       containers:
       - name: postgres
         image: postgres:15.5
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          #!/bin/sh
+          export $(cat /vault/secrets/cred) && exec docker-entrypoint.sh postgres
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: vault-secrets
+          mountPath: /vault/secrets
