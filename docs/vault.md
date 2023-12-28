@@ -215,3 +215,48 @@ vault kv put secret/postgres/cred username="postgres" password="postgres"
 ```bash
 kubectl create serviceaccount vault-auth -n postgres
 ```
+
+## Vault "Database" Secrets Engine
+
+### Enabling the "Database" Secrets Engine
+
+Once you have a database up and running, and a vault user with the correct permissions, you can enable the database secrets engine.
+
+1. Follow the steps in [Enabling the Kubernetes Authentication Method](#enabling-the-kubernetes-authentication-method) section
+
+2. Connect to Vault with [Connecting to Vault](#connecting-to-vault) section
+
+3. Login to Vault
+
+```bash
+vault login <ROOT_TOKEN>
+```
+
+4. Enable the secrets engine
+
+```bash
+vault secrets enable database
+```
+
+5. Configure the database secrets engine
+
+```bash
+vault write database/config/my-postgres-server-name \
+  plugin_name="postgresql-database-plugin" \
+  allowed_roles="my-postgres-role" \
+  connection_url="postgresql://{{username}}:{{password}}@postgres.postgres.svc.cluster.local:5432/postgres" \
+  username="vault" \
+  password="vaultpassword" \
+  password_authentication="scram-sha-256"
+```
+
+6. Create a Vault Role for your namespace
+
+```bash
+vault write database/roles/my-postgres-role \
+  db_name="my-postgres-server-name" \
+  creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+      GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+  default_ttl="1h" \
+  max_ttl="24h"
+```
