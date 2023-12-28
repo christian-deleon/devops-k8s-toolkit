@@ -124,34 +124,99 @@ vault write auth/kubernetes/config \
   kubernetes_ca_cert=@$K8S_CACERT_PATH
 ```
 
-6. Create Vault Role
-
-```bash
-vault write auth/kubernetes/role/internal-app \
-  policies=internal-app \
-  bound_service_account_names=vault-auth \
-  bound_service_account_namespaces=vault \
-  ttl=24h
-```
-
-7. Create a policy
-
-```bash
-vault policy write internal-app - <<EOF
-path "secret/data/internal-app/*" {
-  capabilities = ["read"]
-}
-EOF
-```
-
-8. Exit the Vault pod
+6. Exit the Vault pod
 
 ```bash
 exit
 ```
 
-9. Create a Kubernetes service account
+7. Create a Kubernetes service account
 
 ```bash
 kubectl create serviceaccount vault-auth -n vault
+```
+
+## Enabling Secrets Engine
+
+1. Follow the steps in [Enabling the Kubernetes Authentication Method](#enabling-the-kubernetes-authentication-method) section
+
+2. Connect to Vault with [Connecting to Vault](#connecting-to-vault) section
+
+3. Login to Vault
+
+```bash
+vault login <ROOT_TOKEN>
+```
+
+4. Enable the secrets engine
+
+```bash
+vault secrets enable -path=secret kv-v2
+```
+
+## Creating a Secret
+
+1. Create a Vault Role for your namespace
+
+```bash
+vault write auth/kubernetes/role/postgres \
+  bound_service_account_names=vault-auth \
+  bound_service_account_namespaces=postgres \
+  policies=postgres \
+  ttl=1h
+```
+
+2. Create a policy
+
+```bash
+vault policy write postgres - <<EOF
+path "secret/postgres/*" {
+  capabilities = ["read"]
+}
+EOF
+```
+
+3. Create a Vault Secret
+
+```bash
+vault kv put secret/postgres/cred username="postgres" password="postgres"
+```
+
+## Retrieving Secrets
+
+### Configuring a pod with the Vault Agent Sidecar Injector
+
+1. Annotate your Deployment
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-secret-cred: "secret/postgres/cred"
+        vault.hashicorp.com/agent-inject-template-cred: |
+          {{- with secret "secret/postgres/cred" }}
+          POSTGRES_USER={{ .Data.username }}
+          POSTGRES_PASSWORD={{ .Data.password }}
+          {{- end }}
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+      - name: postgres
+        image: postgres:15.5
+        ports:
+        - containerPort: 5432
 ```

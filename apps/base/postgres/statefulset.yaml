@@ -13,15 +13,18 @@ spec:
     metadata:
       labels:
         app: postgres
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-secret-cred: "secret/postgres/cred"
+        vault.hashicorp.com/agent-inject-template-cred: |
+          {{- with secret "secret/postgres/cred" }}
+          POSTGRES_USER={{ .Data.username }}
+          POSTGRES_PASSWORD={{ .Data.password }}
+          {{- end }}
     spec:
+      serviceAccountName: vault-auth
       containers:
       - name: postgres
         image: postgres:15.5
         ports:
         - containerPort: 5432
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-password
-              key: password
