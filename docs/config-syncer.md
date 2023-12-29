@@ -46,3 +46,7 @@ kustomize create --autodetect
 ```
 
 6. Commit your changes to Git
+
+## Synchronize Configuration across Namespaces
+
+Visit the their [guide](https://config-syncer.com/docs/v0.14.5/guides/config-syncer/intra-cluster/) for more information.
