@@ -58,3 +58,45 @@ kustomize create
 ```
 
 6. Repeat step 5 in `infrastructure/development`
+
+## Adding an App from a private Git Repository
+
+1. Change directory to `apps/base/my-app`
+
+2. Create 'namespace.yaml' if it does not exist
+
+```bash
+kubectl create namespace my-app
+```
+
+3. Create 'gitrepository.yaml'
+
+```bash
+flux create source git my-app \
+    --url=ssh://git@gitlab.robochris.net/my-group/my-app.git \
+    --branch=develop \
+    --secret-ref=flux-system \
+    --export > gitrepository.yaml
+```
+
+4. Create 'flux-kustomization.yaml'
+
+```bash
+flux create kustomization my-app \
+    --source=GitRepository/my-app.flux-system \
+    --path="./k8s" \
+    --prune=true \
+    --interval=1m \
+    --namespace=my-app-namespace \
+    --export > flux-kustomization.yaml
+```
+
+Add `flux-system` in `--source=GitRepository/my-app.flux-system` if the GitRepository is in another namespace `flux-system` for this example.
+
+1. Create 'kustomization.yaml'
+
+```bash
+kustomize create --autodetect
+```
+
+6. Commit and push changes to Git
