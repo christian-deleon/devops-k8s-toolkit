@@ -82,3 +82,7 @@ In the [flux.md](docs/flux.md) guide, you will learn how to deploy Flux CD to yo
 In the [vault.md](docs/vault.md) guide, you will learn how to deploy HashiCorp Vault to your cluster and configure it to store secrets for your applications. This is the recommended approach for storing secrets in your cluster.
 
 In the [sealed-secrets.md](docs/sealed-secrets.md) guide, you will learn how to deploy Sealed Secrets to your cluster and configure it to encrypt and decrypt secrets for your applications. If you do not wish to deploy HashiCorp Vault, this is an alternative approach for storing secrets in your cluster. However, this approach is not recommended for production environments.
+
+In the [velero.md](docs/velero.md) guide, you will learn how to deploy Velero to your cluster and configure it to backup and restore your cluster resources.
+
+In the [config-syncer.md](docs/config-syncer.md) guide, you will learn how to deploy Config Syncer to your cluster and configure it to synchronize your cluster resources across namespaces.
