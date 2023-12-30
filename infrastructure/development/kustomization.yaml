@@ -4,3 +4,4 @@ resources:
   - ../base/velero
   - ../base/vault
   - ../base/config-syncer
+  - ../base/metallb
