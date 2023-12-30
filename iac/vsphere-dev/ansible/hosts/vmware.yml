@@ -1,0 +1,15 @@
+plugin: community.vmware.vmware_vm_inventory
+strict: False
+hostname: 192.168.1.4
+validate_certs: False
+with_tags: True
+
+filters:
+  - "'k8s-dev' in tag_category"
+
+keyed_groups:
+  - key: tags
+    separator: ""
+
+groups:
+  cluster: "'k8s-dev' in tag_category"

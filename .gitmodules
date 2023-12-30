@@ -1,0 +1,6 @@
+[submodule "iac/vsphere-dev/packer/alma-linux-8"]
+	path = iac/vsphere-dev/packer/alma-linux-8
+	url = git@gitlab.robochris.net:devops/packer/vsphere/alma-linux-8.git
+[submodule "iac/vsphere-dev/ansible/collections/christian_deleon/kubernetes"]
+	path = iac/vsphere-dev/ansible/collections/christian_deleon/kubernetes
+	url = git@gitlab.robochris.net:devops/ansible/collections/kubernetes.git

@@ -1,0 +1,3 @@
+---
+ansible_user: ansible
+context_name: k8s-dev
