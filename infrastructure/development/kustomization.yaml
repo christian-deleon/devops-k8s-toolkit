@@ -5,3 +5,4 @@ resources:
   - ../base/vault
   - ../base/config-syncer
   - ../base/metallb
+  - ../base/ingress-nginx
