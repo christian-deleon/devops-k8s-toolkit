@@ -6,3 +6,4 @@ resources:
   - ../base/config-syncer
   - ../base/metallb
   - ../base/ingress-nginx
+  - ../base/nfs
