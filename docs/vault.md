@@ -48,7 +48,7 @@ kustomize create --autodetect
 ```
 
 6. Commit your changes to Git
-   
+
 ## Connecting to Vault
 
 1. Port forward the Vault server
@@ -153,67 +153,29 @@ vault login <ROOT_TOKEN>
 With kv-v2 (recommended)
 
 ```bash
-vault secrets enable -path=secret kv-v2
+vault secrets enable kv-v2
 ```
 
 With kv-v1
 
 ```bash
-vault secrets enable -path=secret kv
+vault secrets enable kv
 ```
 
 ### Creating a Secret
 
-1. Create a Vault Role for your namespace
-
-```bash
-vault write auth/kubernetes/role/postgres \
-  bound_service_account_names=vault-auth \
-  bound_service_account_namespaces=postgres \
-  policies=postgres \
-  ttl=1h
-```
-
-2. Create a policy
+1. Create a Vault Secret
 
 With kv-v2 (recommended)
 
 ```bash
-vault policy write postgres - <<EOF
-path "secret/data/postgres/*" {
-  capabilities = ["read"]
-}
-EOF
+vault kv put secret/data/api/cred key="<KEY>" secret="<SECRET>"
 ```
 
 With kv-v1
 
 ```bash
-vault policy write postgres - <<EOF
-path "secret/postgres/*" {
-  capabilities = ["read"]
-}
-EOF
-```
-
-3. Create a Vault Secret
-
-With kv-v2 (recommended)
-
-```bash
-vault kv put secret/data/postgres/cred username="postgres" password="postgres"
-```
-
-With kv-v1
-
-```bash
-vault kv put secret/postgres/cred username="postgres" password="postgres"
-```
-
-4. Create a Kubernetes service account
-
-```bash
-kubectl create serviceaccount vault-auth -n postgres
+vault kv put secret/api/cred key="<KEY>" secret="<SECRET>"
 ```
 
 ## Vault "Database" Secrets Engine
@@ -261,29 +223,59 @@ vault write database/roles/my-postgres-role \
   max_ttl="24h"
 ```
 
-### Retrieving a Database Credential
+## Vault "RabbitMQ" Secrets Engine
+
+### Enabling the "RabbitMQ" Secrets Engine
+
+Vault RabbitMQ [docs](https://developer.hashicorp.com/vault/docs/secrets/rabbitmq)
+
+Once you have a RabbitMQ up and running, and a vault user with the correct permissions, you can enable the RabbitMQ secrets engine.
+
+1. Enable the secrets engine
+
+```bash
+vault secrets enable rabbitmq
+```
+
+2. Configure the RabbitMQ secrets engine
+
+```bash
+vault write rabbitmq/config/connection \
+  connection_uri="http://rabbitmq-management.rabbitmq.svc.cluster.local:15672" \
+  username="vault" \
+  password="password"
+```
+
+3. Create a Vault Role for your namespace
+
+```bash
+vault write rabbitmq/roles/my-role \
+  vhosts='{"/":{"write": ".*", "read": ".*"}}'
+```
+
+### Authenticating your application with Vault
 
 1. Create a Kubernetes service account
 
 ```bash
-kubectl create serviceaccount my-app -n my-app-namespace
+kubectl create serviceaccount vault-auth -n app-namespace
 ```
 
-2. Create a Vault Role for your namespace
+2. Create a Vault Role
 
 ```bash
-vault write auth/kubernetes/role/my-app \
-  bound_service_account_names=my-app \
-  bound_service_account_namespaces=my-app-namespace \
-  policies=my-app \
+vault write auth/kubernetes/role/app-api-read \
+  bound_service_account_names=vault-auth \
+  bound_service_account_namespaces=app-namespace \
+  policies=app-api-read \
   ttl=1h
 ```
 
 3. Create a policy
 
 ```bash
-vault policy write my-app - <<EOF
-path "database/creds/my-postgres-role" {
+vault policy write app-api-read - <<EOF
+path "kv/data/app/*" {
   capabilities = ["read"]
 }
 EOF
