@@ -13,7 +13,7 @@ terraform {
 }
 
 provider "vsphere" {
-  vsphere_server       = "192.168.1.4"
+  vsphere_server       = "vcenter.lan"
   allow_unverified_ssl = true
   user                 = var.vsphere_username
   password             = var.vsphere_password
@@ -24,8 +24,8 @@ locals {
 }
 
 module "k8s_cluster" {
-  source  = "gitlab.robochris.net/devops/vmware-kubernetes-cluster/vmware"
-  version = "~> 1.2.1"
+  source  = "gitlab.com/devops9483002/vmware-kubernetes-cluster/vmware"
+  version = "~> 1.2.2"
 
   datacenter      = "Datacenter"
   compute_cluster = "cluster-01"

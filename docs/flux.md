@@ -73,7 +73,7 @@ kubectl create namespace my-app
 
 ```bash
 flux create source git my-app \
-    --url=ssh://git@gitlab.robochris.net/my-group/my-app.git \
+    --url=ssh://git@gitlab.com:devops9483002/devops-k8s-toolkit.git \
     --branch=develop \
     --secret-ref=flux-system \
     --export > gitrepository.yaml

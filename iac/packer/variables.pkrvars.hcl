@@ -1,6 +1,6 @@
 // vSphere Variables
 
-vsphere_endpoint            = "192.168.1.4"
+vsphere_endpoint            = "vcenter.lan"
 vsphere_insecure_connection = true
 vsphere_datacenter          = "Datacenter"
 vsphere_cluster             = "cluster-01"
