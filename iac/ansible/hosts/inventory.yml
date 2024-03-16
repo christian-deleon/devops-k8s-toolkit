@@ -1,0 +1,18 @@
+all:
+  children:
+    controlplane:
+      children:
+        controlplane_master:
+          hosts:
+            192.168.1.80:
+        controlplane_slave:
+          hosts:
+    worker:
+      hosts:
+        192.168.1.81:
+        192.168.1.82:
+        192.168.1.83:
+    cluster:
+      children:
+        controlplane:
+        worker:
