@@ -1,0 +1,54 @@
+---
+- name: Prepare hosts
+  hosts: all
+  become: true
+  tags: prepare
+  tasks:
+    - name: Wait for cloud-init to finish
+      tags: cloud-init
+      ansible.builtin.wait_for:
+        path: /var/lib/cloud/instance/boot-finished
+        state: present
+        timeout: 600
+
+    - name: Configure QEMU Guest Agent
+      when: ansible_virtualization_type == 'kvm'
+      tags: qemu-guest-agent
+      block:
+        - name: Install QEMU Guest Agent
+          ansible.builtin.package:
+            name: qemu-guest-agent
+            state: present
+
+        - name: Start and enable QEMU Guest Agent
+          ansible.builtin.service:
+            name: qemu-guest-agent
+            state: started
+            enabled: true
+
+    - name: Include NFS client role
+      ansible.builtin.include_role:
+        name: nfs_client_install
+
+- name: Configure Kubernetes
+  hosts: cluster
+  become: true
+  vars:
+    rke2_disable_firewalld: true
+  roles:
+    - role: christian_deleon.kubernetes.rke2
+      tags: rke2
+
+- name: Configure kubeconfig
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    kubeconfig_env_file: ~/.exports
+    kubeconfig_dir: ~/.kube
+    kubeconfig_name: "{{ context_name }}"
+
+  roles:
+    - role: christian_deleon.kubernetes.kubeconfig
+      tags: kubeconfig

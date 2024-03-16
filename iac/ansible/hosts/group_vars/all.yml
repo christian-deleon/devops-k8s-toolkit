@@ -1,3 +1,3 @@
 ---
-ansible_user: ansible
-context_name: k8s-dev
+ansible_user: devops
+context_name: devops-toolkit

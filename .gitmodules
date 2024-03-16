@@ -4,3 +4,6 @@
 [submodule "iac/ansible/collections/christian_deleon/kubernetes"]
 	path = iac/ansible/collections/christian_deleon/kubernetes
 	url = https://gitlab.com/devops9483002/ansible/collections/kubernetes.git
+[submodule "iac/ansible/roles/nfs_client_install"]
+	path = iac/ansible/roles/nfs_client_install
+	url = git@gitlab.com:devops9483002/ansible/roles/nfs_client_install.git
