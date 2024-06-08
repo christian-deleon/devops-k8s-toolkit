@@ -58,7 +58,7 @@ kustomize create --autodetect
 ```bash
 velero install \
     --provider aws \
-    --plugins velero/velero-plugin-for-aws:v1.8.2 \
+    --plugins velero/velero-plugin-for-aws:v1.9.2 \
     --bucket $BUCKET \
     --backup-location-config region=$REGION \
     --snapshot-location-config region=$REGION \

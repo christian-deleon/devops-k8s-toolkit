@@ -1,0 +1,36 @@
+site_name: DevOps K8s Toolkit
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+  features:
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+
+nav:
+  - Home: index.md
+  - Ansible: ansible.md
+  - Config Syncer: config-syncer.md
+  - External Secrets Operator: external-secrets-operator.md
+  - Flux: flux.md
+  - Kind: kind.md
+  - MetalLB: metallb.md
+  - Nginx Ingress: nginx-ingress.md
+  - Packer: packer.md
+  - Sealed Secrets: sealed-secrets.md
+  - Terraform: terraform.md
+  - Vault: vault.md
+  - Velero: velero.md
